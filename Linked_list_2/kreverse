@@ -1,0 +1,155 @@
+Implement kReverse( int k ) in a linked list i.e. you need to reverse first K elements then reverse next k elements and join the linked list and so on.
+Indexing starts from 0. If less than k elements left in the last, you need to reverse them as well. If k is greater than length of LL, reverse the complete LL.
+You don't need to print the elements, just return the head of updated LL.
+Input format :
+
+Line 1 : Linked list elements (separated by space and terminated by -1)
+
+Line 2 : k
+
+Sample Input 1 :
+1 2 3 4 5 6 7 8 9 10 -1
+4
+Sample Output 1 :
+4 3 2 1 8 7 6 5 10 9
+
+
+//
+node* kReverse(node*head,int n)
+{
+if(head == NULL || head->next == NULL){
+        return head;
+    }
+    node* current = head;
+    node* temp = head;
+    node* pre = NULL;
+    int i = 0;
+    while(current!=NULL && i<n){
+        temp = temp -> next;
+        current->next = pre;
+        pre = current;
+        current = temp;
+        i++;
+    }
+    if(temp != NULL){
+        head->next = kReverse(temp,n);
+    }
+    return pre;
+}
+
+//using class
+
+class Pair{
+    public:
+    node* head;
+    node* tail;
+    Pair(){
+        head=NULL;
+        tail=NULL;
+    }
+    
+};
+Pair reverse(node* head){
+    
+    	if(head==NULL||head->next==NULL){
+            Pair ans;
+            ans.head=head;
+            ans.tail=head;
+                return ans;
+        }
+    Pair smallans=reverse(head->next);
+  	smallans.tail->next=head;
+    smallans.tail=head;
+    head->next=NULL;
+    
+    return smallans;
+    	
+}
+node* kReverse(node*head,int n)
+{
+    if(head==NULL)
+        return NULL;
+    
+    node * h1=head,*t1=head;
+    int count=1;
+    
+    // counting till n nodes
+    while(count<n && t1->next)
+    {
+        t1=t1->next;
+        count++;
+    }
+     //break this part from LL 
+    // and reverse it
+    node*h2=t1->next;
+    t1->next=NULL;
+    
+    
+    Pair smallans=reverseurec(h1);
+     // we have head and tail of reversed LL in small ans
+    
+    h2=kReverse(h2,n);
+    
+    // connecting LL again
+    
+    smallans.tail->next=h2;
+    
+    return smallans.head;
+    //write your code here
+}
+
+
+
+
+//reverses the LL
+node *reverse_linked_list_rec(node *head)
+{
+    //write your recursive code here
+  if(head==NULL || head ->next ==NULL)
+      return head;
+    
+    node* smallans=reverse_linked_list_rec(head->next);
+    node*tail= head->next;
+    tail->next=head;
+    head ->next =NULL;
+    
+    return smallans;
+                                         
+}
+
+
+node* kReverse(node*head,int n)
+{
+    if(head==NULL)
+        return NULL;
+    
+    node * h1=head,*t1=head;
+    int count=1;
+    //move to kth node
+    while(count<n && t1->next)
+    {
+        t1=t1->next;
+        count++;
+    }
+    node*h2=t1->next;
+    t1->next=NULL;
+    //break this part from LL 
+    // and reverse it
+    h1=reverse_linked_list_rec(h1);
+    t1=h1;
+    
+    // iterate till next k nodes
+    while(count>1)
+    {
+        t1=t1->next;
+        count--;
+    }
+    
+    // now call recuursion to kreverse remainng LL
+    h2=kReverse(h2,n);
+    
+    //connect the LL
+    t1->next=h2;
+    
+    return h1;
+}
